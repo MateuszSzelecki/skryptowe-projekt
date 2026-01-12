@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">Logowanie</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action=""> <!-- dane wysłane w paczce wewnątrz zapytania -->
+                        {{ form.hidden_tag() }}
+                        <!-- generuje ukryte pole z tokenem CSRF -->
+                        <!-- flask tworzy unikalny kod biletu dla tej sesji - kiedy klikam zaloguj, serwer sprawdza czy bilet wrócił -->
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Użytkownik</label>
+                            {{ form.username(class="form-control", placeholder="Wpisz login") }}
+                            <!-- odwołujemy się do pola 'username' zdefiniowanego w pliku app/forms.py -->
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Hasło</label>
+                            {{ form.password(class="form-control", placeholder="Wpisz hasło") }}
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Zaloguj się</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-muted text-center small">
+                    Autoryzowany dostęp tylko dla personelu SOC
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
