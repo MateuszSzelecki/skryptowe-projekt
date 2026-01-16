@@ -139,21 +139,23 @@ def fetch_logs(host_id):
             ssh_key = current_app.config.get("SSH_KEY_FILE")
 
             with RemoteClient(host=host.ip_address, user=ssh_user, port=ssh_port, key_file=ssh_key) as client:
-                raw_data = LogCollector.get_linux_logs(client, since=log_source.last_fetch)
+                raw_data = LogCollector.get_linux_logs(client, last_fetch_time=log_source.last_fetch)
                 logs = raw_data
 
         elif host.os_type == 'WINDOWS':
             client = WinClient()
-            raw_data = LogCollector.get_windows_logs(client, since=log_source.last_fetch)
+            raw_data = LogCollector.get_windows_logs(client, last_fetch_time=log_source.last_fetch)
             logs = raw_data
 
         if not logs: #jeśli brak nowych logów na serwerze to nie marnujemy zasobów na zapis pliku
             return jsonify({"message": "Brak nowych logów do pobrania", "alerts": 0}), 200
         
-        filename = DataManager.save_logs_to_parquet(logs, host.id) #zapisanie logów do pliku Parquet
-        #format Parquet jest wydajny, kolumnowy, odporny na manipulacje
+        filename, record_count = DataManager.save_logs_to_parquet(logs, host.id) #zapisanie logów do pliku Parquet
+        # jeśli zapis się nie powiódł to filename może być None
+        if not filename:
+            return jsonify({"error": "Błąd zapisu pliku z logami"}), 500
 
-        new_archive = LogArchive(host_id=host.id, filename=filename)
+        new_archive = LogArchive(host_id=host.id, filename=filename, record_count=record_count)
         db.session.add(new_archive) #rejestrujemy w bazie fakt stworzenia nowego pliku z logami z konkretnego hosta
 
         log_source.last_fetch = datetime.now(timezone.utc) #przesuwamy wskaźnik czasu na teraz

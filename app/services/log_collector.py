@@ -24,10 +24,11 @@ class LogCollector:
         logs = []
         
         # Budowanie komendy: pobierz JSON z journalctl
-        cmd = "sudo journalctl -u ssh -o json --no-pager"
+        cmd = "journalctl -u ssh -o json --no-pager"
         
         if last_fetch_time:
-            since_str = last_fetch_time.strftime("%Y-%m-%d %H:%M:%S")
+            # Dodajemy " UTC" żeby journalctl wiedział że podajemy czas uniwersalny a nie lokalny
+            since_str = last_fetch_time.strftime("%Y-%m-%d %H:%M:%S UTC")
             cmd += f' --since "{since_str}"'
         else:
             cmd += ' --since "7 days ago"' # Domyślny zasięg na start

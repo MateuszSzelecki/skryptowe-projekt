@@ -1,6 +1,6 @@
 import { createEl, clearContainer } from './dom.js';
 // Zauważ: Usuwamy importy fetchIPs itp., bo ich nie ma w api.js (student musi je dodać po napisaniu)
-import { fetchHosts, createHost, updateHost, removeHost } from './api.js'; 
+import { fetchHosts, createHost, updateHost, removeHost } from './api.js';
 import { fetchIPs, createIP, updateIP, removeIP } from './api.js';
 
 // --- SEKCJA HOSTÓW ---
@@ -20,7 +20,7 @@ export async function initAdmin() {
     // Inicjalizacja Bootstrap Modals
     const hostModalEl = document.getElementById('editHostModal');
     if (hostModalEl) hostModal = new bootstrap.Modal(hostModalEl);
-    
+
     const ipModalEl = document.getElementById('editIPModal');
     if (ipModalEl) ipModal = new bootstrap.Modal(ipModalEl);
 
@@ -29,13 +29,13 @@ export async function initAdmin() {
     if (document.getElementById('saveHostBtn')) {
         document.getElementById('saveHostBtn').addEventListener('click', handleSaveHost);
     }
-    
+
     if (ipForm) ipForm.addEventListener('submit', handleAddIP); //przypisanie działania przycisku do zatwierdzenia formularza
     if (refreshIPsBtn) refreshIPsBtn.addEventListener('click', refreshIPs); //przypisanie działania do odświeżania
     if (document.getElementById('saveIPBtn')) {
         document.getElementById('saveIPBtn').addEventListener('click', handleSaveIP);
     }
-    
+
     if (ipContainer) await refreshIPs();
 
     // Start Hosty
@@ -49,12 +49,12 @@ async function refreshHosts() {
     try {
         const hosts = await fetchHosts();
         hosts.forEach(renderHostRow);
-    } catch(e) { console.error(e); }
+    } catch (e) { console.error(e); }
 }
 
 function renderHostRow(host) {
     const item = createEl('div', ['list-group-item', 'd-flex', 'justify-content-between', 'align-items-center'], '', hostsContainer);
-    
+
     const info = createEl('div', [], '', item);
     const icon = host.os_type === 'LINUX' ? '🐧' : '🪟';
     createEl('span', ['me-2'], icon, info);
@@ -62,13 +62,13 @@ function renderHostRow(host) {
     createEl('small', ['text-muted'], host.ip_address, info);
 
     const btnGroup = createEl('div', ['btn-group', 'btn-group-sm'], '', item);
-    
+
     const editBtn = createEl('button', ['btn', 'btn-outline-secondary'], '✏️', btnGroup);
     editBtn.addEventListener('click', () => openHostModal(host));
 
     const delBtn = createEl('button', ['btn', 'btn-outline-danger'], '🗑️', btnGroup);
     delBtn.addEventListener('click', async () => {
-        if(confirm(`Usunąć hosta ${host.hostname}?`)) {
+        if (confirm(`Usunąć hosta ${host.hostname}?`)) {
             await removeHost(host.id);
             await refreshHosts();
         }
@@ -86,7 +86,7 @@ async function handleAddHost(e) {
         await createHost(data);
         e.target.reset();
         await refreshHosts();
-    } catch(err) { alert(err.message); }
+    } catch (err) { alert(err.message); }
 }
 
 function openHostModal(host) {
@@ -108,7 +108,7 @@ async function handleSaveHost() {
         await updateHost(id, data);
         hostModal.hide();
         await refreshHosts();
-    } catch(err) { alert(err.message); }
+    } catch (err) { alert(err.message); }
 }
 
 
@@ -118,9 +118,9 @@ async function refreshIPs() { //do odświeżania listy IPs w HTML
     clearContainer(ipContainer); //wyczyszczenie starej listy w HTML
     try {
         const ips = await fetchIPs(); //pobieramy nowe dane z API, await żeby poczkać aż odpowie
-        if(ips.length === 0) createEl('div', ['p-2', 'text-muted', 'small'], 'Pusto.', ipContainer);
+        if (ips.length === 0) createEl('div', ['p-2', 'text-muted', 'small'], 'Pusto.', ipContainer);
         ips.forEach(renderIPRow); //dla każdego IP tworzymy nowy wiersz
-    } catch(e) { console.error("Błąd IP:", e); }
+    } catch (e) { console.error("Błąd IP:", e); }
 }
 
 function renderIPRow(ip) {
@@ -129,10 +129,10 @@ function renderIPRow(ip) {
 
     const info = createEl('div', [], '', item);
     let color = 'bg-secondary';
-    if(ip.status === 'TRUSTED') color = 'bg-success';
-    if(ip.status === 'BANNED') color = 'bg-danger'; //odpowiedni kolor w zależnosci od koloru
+    if (ip.status === 'TRUSTED') color = 'bg-success';
+    if (ip.status === 'BANNED') color = 'bg-danger'; //odpowiedni kolor w zależnosci od koloru
     createEl('span', ['badge', color, 'me-2'], ip.status[0], info); //mała ikonka z literą statusu
-    
+
     createEl('span', ['fw-bold', 'font-monospace', 'me-2'], ip.ip_address, info);
     //fonta-monospace - czcionka o stałej szerokosci - ulatwia czytanie adresów IP
 
@@ -144,13 +144,13 @@ function renderIPRow(ip) {
     createEl('small', ['text-muted'], timeStr, info);
 
     const btnGroup = createEl('div', ['btn-group', 'btn-group-sm'], '', item);
-    
+
     const editBtn = createEl('button', ['btn', 'btn-outline-secondary'], '✏️', btnGroup);
     editBtn.addEventListener('click', () => openIPModal(ip)); //przekazujemy IP żeby mógł otworzyć cały obiekt
 
     const delBtn = createEl('button', ['btn', 'btn-outline-danger'], '🗑️', btnGroup);
     delBtn.addEventListener('click', async () => {
-        if(confirm(`Usunąć adres IP ${ip.ip_address} z rejestru?`)) { //pyta o potwierdzenie
+        if (confirm(`Usunąć adres IP ${ip.ip_address} z rejestru?`)) { //pyta o potwierdzenie
             try {
                 await removeIP(ip.id); //wywołuje funkcję wysyłającą zapytanie DELETE do serwera
                 await refreshIPs(); //czeka aż się uda i odświeża
@@ -169,7 +169,7 @@ async function handleAddIP(e) { //funkcja do wysyłania głównego formularza do
         await createIP(data); //wysyła żądanie POST
         e.target.reset(); //czyszczenie formularza w przypadku potwierdzenia sukcesu
         await refreshIPs();
-    } catch(err) { alert(err.message); }
+    } catch (err) { alert(err.message); }
 }
 
 function openIPModal(ip) { //żeby formularz był wypełniony gdy chcemy edytować
@@ -181,7 +181,7 @@ function openIPModal(ip) { //żeby formularz był wypełniony gdy chcemy edytowa
 
 async function handleSaveIP() { //gdy zatwierdzimy zapisanie 
     const id = document.getElementById('editIPId').value; //gdy w oknie edycji klikniemy przycisk "Zapisz"
-    const data = { 
+    const data = {
         ip_address: document.getElementById('editIPVal').value, //zbiera wartości z pól
         status: document.getElementById('editIPStatus').value
     };
@@ -189,5 +189,5 @@ async function handleSaveIP() { //gdy zatwierdzimy zapisanie
         await updateIP(id, data); //wywołuje żądanie PUT do serwera
         ipModal.hide(); //ukrycie okna edycji
         await refreshIPs(); //odświeżenie
-    } catch(err) { alert(err.message); }
+    } catch (err) { alert(err.message); }
 }

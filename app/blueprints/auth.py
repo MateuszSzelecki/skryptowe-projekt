@@ -13,18 +13,15 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first() #pobranie usera z bazy po nazwie wpisanej w formularzu
+        user = User.query.filter_by(username=form.username.data).first()
 
-        if user and user.check_password(form.password.data): #czy user istnieje i czy haslo pasuje
+        if user and user.check_password(form.password.data):
             login_user(user)
-            flash('Zalogowano pomyslnie!', 'success') #do przekazywania krótkich wiadomości między 2 przeładowaniami strony, success do bootstrapa
-            return redirect(url_for('ui.config')) #poszukuje adresów, znajduje adres przypisany do funkcji o nazwie config wewnątrz blueprinta ui
+            flash('Zalogowano pomyślnie!', 'success')
+            return redirect(url_for('ui.config'))
         else:
-            flash('Błąd logowania', 'danger')
+            flash('Błąd logowania: Nieprawidłowy login lub hasło', 'danger')
         
-        flash('Mechanizm logowania nie jest jeszcze zaimplementowany!', 'warning')
-        # pass
-
     return render_template('login.html', form=form)
 
 @auth_bp.route('/logout')

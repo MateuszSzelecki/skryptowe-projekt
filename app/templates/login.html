@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block title %}Logowanie - miniSIEM{% endblock %}
+
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
@@ -9,15 +11,13 @@
                     <h4 class="mb-0">Logowanie</h4>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action=""> <!-- dane wysłane w paczce wewnątrz zapytania -->
+                    <form method="POST" action=""> 
+                        {# Generuje ukryte pole z tokenem CSRF dla bezpieczeństwa #}
                         {{ form.hidden_tag() }}
-                        <!-- generuje ukryte pole z tokenem CSRF -->
-                        <!-- flask tworzy unikalny kod biletu dla tej sesji - kiedy klikam zaloguj, serwer sprawdza czy bilet wrócił -->
                         
                         <div class="mb-3">
                             <label class="form-label">Użytkownik</label>
                             {{ form.username(class="form-control", placeholder="Wpisz login") }}
-                            <!-- odwołujemy się do pola 'username' zdefiniowanego w pliku app/forms.py -->
                         </div>
                         
                         <div class="mb-3">

@@ -1,7 +1,7 @@
 import { createEl, clearContainer } from './dom.js';
 import { fetchHosts, checkHostStatus, triggerLogFetch } from './api.js'; 
 // TODO: Po uzupełnieniu api.js odkomentuj import poniżej:
-// import { fetchAlerts } from './api.js';
+import { fetchAlerts } from './api.js';
 
 const hostsContainer = document.getElementById('hostsContainer');
 const alertsBody = document.getElementById('alertsBody');
@@ -135,15 +135,8 @@ async function refreshAlertsTable() {
     clearContainer(alertsBody);
 
     try {
-        // TODO: ZADANIE 4 - ODKOMENTUJ POBIERANIE ALERTÓW
-        // Obecnie funkcja fetchAlerts nie istnieje w api.js.
-        // Dopóki jej nie napiszesz, poniższa linia będzie rzucać błąd (Uncaught ReferenceError).
+        const alerts = await fetchAlerts(); 
         
-        // const alerts = await fetchAlerts(); 
-        
-        // TYMCZASOWO: Pusta lista, żeby Dashboard się ładował
-        const alerts = []; 
-
         if (alerts.length === 0) {
             const row = createEl('tr', [], '', alertsBody);
             const cell = createEl('td', ['text-center', 'text-muted', 'py-3'], 'Brak alertów (lub brak połączenia z API).', row);

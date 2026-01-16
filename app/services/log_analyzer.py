@@ -40,8 +40,8 @@ class LogAnalyzer:
             user = row.get('user', 'unknown')
             
             # Ignorujemy lokalne, bo SIEM skupia się na wejściach z zewnątrz
-            if ip in ['LOCAL', 'LOCAL_CONSOLE', '127.0.0.1', '::1']:
-                continue
+            # if ip in ['LOCAL', 'LOCAL_CONSOLE', '127.0.0.1', '::1']:
+            #     continue
 
             ip_entry = IPRegistry.query.filter_by(ip_address=ip).first() #sprawdzenie reputacji tego IP w bazie (Threat Intel)
 
